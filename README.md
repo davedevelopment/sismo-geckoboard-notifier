@@ -10,7 +10,7 @@ Challenge](http://ibuildings.com/challenge) of 2012. It's a simple notifier that
 pushes a message up to a widget on your [Geckoboard](http://geckoboard.com)
 
 I've used a hacky way to send the HTTP POST in order to keep this dependency
-free.
+free, one class, one file, etc.
 
 Usage
 -----
@@ -24,10 +24,12 @@ In your Sismo config
 
 ``` php
 <?php
-$notifer = new Davedevelopment\Sismo\GeckoboardNotifier(
+$notifier = new Davedevelopment\Sismo\GeckoboardNotifier(
     "your_api_key", 
     "your_widget_url"
 ); 
+
+$myProject->addNotifier($notifier);
 
 ```
 
