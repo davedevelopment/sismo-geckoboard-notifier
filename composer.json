@@ -1,0 +1,14 @@
+{
+    "require": {
+        "php": ">=5.3.2"
+    },
+
+    "suggest": {
+        "sismo/sismo": "dev-master"
+    },
+
+    "autoload": {
+        "psr-0": { "Davedevelopment\\Sismo": "src/" }
+    }
+
+}
