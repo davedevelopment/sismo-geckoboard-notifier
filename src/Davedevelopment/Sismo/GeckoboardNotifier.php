@@ -65,7 +65,7 @@ class GeckoboardNotifier extends Notifier
         $type = $commit->getStatus() == 'failed' ? 1 : 2;
 
         $data = array(
-            "apiKey" => $this->apiKey,
+            "api_key" => $this->apiKey,
             "data" => array(
                 "item" => array(
                     array(
