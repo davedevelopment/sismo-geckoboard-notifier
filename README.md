@@ -9,8 +9,19 @@ I had a couple of hours to spare, so I thought I'd have a crack at creating a
 Challenge](http://ibuildings.com/challenge) of 2012. It's a simple notifier that
 pushes a message up to a widget on your [Geckoboard](http://geckoboard.com)
 
+![Widget showing failed status](http://i.imgur.com/9LYKM.png)
+
+It actually ended up being more than a couple of hours, probably about 4 in
+total, after a few refactorings and extra features I thought up. It currently
+passes upto the last 5 build statues to the widget, though this can be
+configured.
+
+![Widget showing success status](http://i.imgur.com/KXtPh.png)
+
 I've used a hacky way to send the HTTP POST in order to keep this dependency
-free, one class, one file, etc. As such, I've used a hacky to test it.
+free, one class, one file, etc. As such, I've used a hacky way to test it fully,
+so you'll need [node.js](http://nodejs.org) installed to run on of the tests
+
 
 Usage
 -----
