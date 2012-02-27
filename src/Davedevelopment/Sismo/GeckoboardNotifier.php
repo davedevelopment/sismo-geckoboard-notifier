@@ -4,7 +4,6 @@ namespace Davedevelopment\Sismo;
 
 use Sismo\Notifier;
 use Sismo\Commit;
-use Buzz\Browser;
 
 /**
  * A geckoboard notifier for Sismo
