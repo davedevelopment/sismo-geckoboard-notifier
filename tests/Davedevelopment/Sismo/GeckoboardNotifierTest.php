@@ -35,6 +35,16 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->mockProjectSlug = 'mockProjectSlug';
+        $this->mockProjectName = 'mockProjectName';
+        $this->mockCommitStatus = 'succeeded';
+        $this->mockCommitStatusCode = 'success';
+        $this->mockCommitSha = 'mockCommitSha';
+        $this->mockCommitShortSha = 'mockCommitShortSha';
+        $this->mockCommitAuthor = 'mockCommitAuthor';
+        $this->mockCommitMessage = 'mockCommitMessage';       
+        $this->mockDate = new \DateTime();
+
         $this->apiKey = "my_api_key";
         $this->widget = "http://dave.com";
         $this->object = new GeckoboardNotifier(
@@ -79,6 +89,67 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
     /**
      * 
      */
+    public function testNotifyWithTwoCommits()
+    {
+        $data = $this->getDataStub();
+        $commit = $this->getCommitMock();
+
+        $this->mockCommitStatus = 'failed';
+        $this->mockCommitStatusCode = 'failed';
+        $commit2 = $this->getCommitMock();
+        $data2 = $this->getDataStub();
+        $data2['data']['item'][0]['type'] = 1;
+
+        $project = $commit->getProject();
+        /**
+         * Bit dodgy this, but I want to override the original expectation
+         */
+        $project->__phpunit_cleanup();
+        $project->expects($this->any())
+                ->method("getCommits")
+                ->will($this->returnValue(array($commit, $commit2)));
+
+        $this->object->notify($commit);
+        $this->assertEquals($this->widget, $this->lastUrl);
+        $this->assertContains(json_encode($data['data']['item'][0]), $this->lastData);
+        $this->assertContains(json_encode($data2['data']['item'][0]), $this->lastData);
+    }
+
+    /**
+     * 
+     */
+    public function testNotifyWithTwoCommitsButCountOfOne()
+    {
+        $data = $this->getDataStub();
+        $commit = $this->getCommitMock();
+
+        $this->mockCommitStatus = 'failed';
+        $this->mockCommitStatusCode = 'failed';
+        $commit2 = $this->getCommitMock();
+        $commit2->getProject()->__phpunit_cleanup();
+        $commit2->__phpunit_cleanup();
+        $data2 = $this->getDataStub();
+        $data2['data']['item'][0]['type'] = 1;
+
+        $project = $commit->getProject();
+        /**
+         * Bit dodgy this, but I want to override the original expectation
+         */
+        $project->__phpunit_cleanup();
+        $project->expects($this->any())
+                ->method("getCommits")
+                ->will($this->returnValue(array($commit, $commit2)));
+
+        $this->object->setCount(1);
+        $this->object->notify($commit);
+        $this->assertEquals($this->widget, $this->lastUrl);
+        $this->assertContains(json_encode($data['data']['item'][0]), $this->lastData);
+        $this->assertNotContains(json_encode($data2['data']['item'][0]), $this->lastData);
+    }
+
+    /**
+     * 
+     */
     public function testNotifySendsAlertType()
     {
         $this->mockCommitStatus = 'failed';
@@ -117,7 +188,7 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
 
         $data = $this->getDataStub();
         $data['data']['item'][0]['text'] = "dave123";
-        $commit = $this->getCommitMock(false);
+        $commit = $this->getCommitMock(true, false);
         $this->object->setFormat($format);
         $this->object->notify($commit);
         $this->assertEquals(json_encode($data), $this->lastData);
@@ -188,6 +259,10 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
                    ->method("getProject")
                    ->will($this->returnValue($project));
 
+            $project->expects($this->any())
+                    ->method("getCommits")
+                    ->will($this->returnValue(array($commit)));
+
             if ($withDefaultExpectations) {
                 $project->expects($this->atLeastOnce())
                         ->method("getSlug")
@@ -220,6 +295,10 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
                 $commit->expects($this->atLeastOnce())
                        ->method("getMessage")
                        ->will($this->returnValue($this->mockCommitMessage));
+
+                $commit->expects($this->any())
+                       ->method("getDate")
+                       ->will($this->returnValue($this->mockDate));
             }
         }
 

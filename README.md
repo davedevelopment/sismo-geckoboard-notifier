@@ -10,7 +10,7 @@ Challenge](http://ibuildings.com/challenge) of 2012. It's a simple notifier that
 pushes a message up to a widget on your [Geckoboard](http://geckoboard.com)
 
 I've used a hacky way to send the HTTP POST in order to keep this dependency
-free, one class, one file, etc.
+free, one class, one file, etc. As such, I've used a hacky to test it.
 
 Usage
 -----
@@ -43,6 +43,7 @@ Todo
 
 * <del>Could optionally take a widget url rather than key, in case they change things</del>
 * <del>Take Buzz out</del>
+* <del>Send output for the last X commits, so they can be paged through</del>
 
 Copyright
 ---------

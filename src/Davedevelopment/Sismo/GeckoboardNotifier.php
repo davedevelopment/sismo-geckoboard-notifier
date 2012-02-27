@@ -31,6 +31,13 @@ class GeckoboardNotifier extends Notifier
     protected $poster = null;
 
     /**
+     * Count
+     *
+     * @var int
+     */
+    protected $count = 5;
+
+    /**
      * Constructor
      *
      * @param string          $apiKey
@@ -68,6 +75,24 @@ class GeckoboardNotifier extends Notifier
                 ),
             ),
         );
+
+        $count = 1;
+        foreach ($commit->getProject()->getCommits() as $com) {
+            if ($count == $this->count) {
+                break;
+            }
+
+            if ($com == $commit) {
+                continue;
+            }
+
+            $data['data']['item'][] = array(
+                'text' => $this->getMessage($com),
+                'type' => $com->getStatus() == 'failed' ? 1 : 2,
+            );
+
+            $count++;
+        }
 
         $response = $this->send($this->widgetUrl, array('Content-type' => 'application/json'), json_encode($data));
         return;
@@ -142,6 +167,25 @@ class GeckoboardNotifier extends Notifier
         $this->format = $format;
         return $this;
     }
+
+    /**
+     * Set Count
+     *
+     * @param int $count
+     * @return GeckoboardNotifier
+     */
+    public function setCount($count)
+    {
+        $count = intval($count);
+
+        if ($count < 1) {
+            throw new \InvalidArgumentException("\$count should be greater than 1");
+        }
+
+        $this->count = $count;
+        return $this;
+    }
+
 
     /**
      * Set widget url
