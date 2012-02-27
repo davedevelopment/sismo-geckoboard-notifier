@@ -329,7 +329,7 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
     protected function getDataStub()
     {
         $data = array(
-            "apiKey" => $this->apiKey,
+            "api_key" => $this->apiKey,
             "data" => array(
                 "item" => array(
                     array(
