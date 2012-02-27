@@ -104,17 +104,6 @@ class GeckoboardNotifier extends Notifier
         return;
     }
 
-
-    /**
-     * Get format
-     *
-     * @return string|callable $format
-     */
-    public function getFormat()
-    {
-        return $this->format;
-    }
-
     /**
      * Set format. A custom string (with placeholders, as described in
      * Sismo\Notifier, or a callback, taking a Commit as it's only parameter
@@ -124,7 +113,7 @@ class GeckoboardNotifier extends Notifier
      */
     public function setFormat($format)
     {
-        if (!is_string($format) && !is_callable($format)) {
+        if ($format !== null && !is_string($format) && !is_callable($format)) {
             throw new \InvalidArgumentException(
                 sprintf("\$format should be string or callable, %s given", gettype($format))
             );

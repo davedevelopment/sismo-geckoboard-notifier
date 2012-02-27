@@ -46,10 +46,10 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
         $this->mockDate = new \DateTime();
 
         $this->apiKey = "my_api_key";
-        $this->widget = "http://dave.com";
+        $this->widget = "https://push.geckoboard.com/v1/send/123";
         $this->object = new GeckoboardNotifier(
             $this->apiKey,
-            $this->widget,
+            123,
             "[%STATUS%]\n%message%\n%author%"
 
         );
@@ -77,7 +77,6 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers {className}::{origMethodName}
      */
     public function testNotify()
     {
@@ -218,6 +217,61 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
         $this->assertContains("POST /mywidget", $request);
         $this->assertContains(json_encode($data), $request);
     }
+
+    /**
+     *
+     */
+    public function testNotifyFailsSilentlyOnNetworkIssue()
+    {
+        $this->object->setPoster(null);
+        $this->object->setWidgetUrl("http://127.0.0.1:45345/mywidget");
+        $commit = $this->getCommitMock();
+        $this->object->notify($commit);
+        // no assertions necessary
+    }
+
+    /**
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetPosterThrows()
+    {
+        $this->object->setPoster('string');
+        
+    }
+
+    /**
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetCountThrows()
+    {
+        $this->object->setCount(0);
+        
+    }
+
+    /**
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetFormatThrows()
+    {
+        $this->object->setFormat(0);
+        
+    }
+
+     /*
+     */
+    public function testNotifyWithDefaultMessage()
+    {
+        $this->object->setFormat(null);
+        $commit = $this->getCommitMock();
+        $this->object->notify($commit);
+        // skip the date 
+        $this->assertContains("<p class=\\\"t-positive\\\">", $this->lastData);
+        $this->assertContains("[SUCCEEDED]<\\/p>\\n<p style=\\\"font-size:80%\\\">mockCommitMessage<br>- mockCommitAuthor<\\/p>", $this->lastData);
+    }
+
 
     /**
      * StartServer
