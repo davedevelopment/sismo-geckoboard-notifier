@@ -102,6 +102,7 @@ class GeckoboardNotifier extends Notifier
             });
             $params['http']['header'] = implode("\n", $headers);
         }
+
         $ctx = stream_context_create($params);
         $fp = @fopen($url, 'rb', false, $ctx);
         if (!$fp) {
@@ -143,6 +144,19 @@ class GeckoboardNotifier extends Notifier
     }
 
     /**
+     * Set widget url
+     *
+     * @param string $url
+     * @return GeckoboardNotifier
+     */
+    public function setWidgetUrl($url)
+    {
+        $this->widgetUrl = $url;
+        return $this;
+    }
+
+
+    /**
      * Set poster, only really here for testing so we can avoid an actual HTTP
      * post
      *
@@ -151,7 +165,7 @@ class GeckoboardNotifier extends Notifier
      */
     public function setPoster($poster)
     {
-        if (!is_callable($poster)) {
+        if ($poster !== null && !is_callable($poster)) {
             throw new \InvalidArgumentException(
                 sprintf("\$poster should be callable, %s given", gettype($poster))
             );

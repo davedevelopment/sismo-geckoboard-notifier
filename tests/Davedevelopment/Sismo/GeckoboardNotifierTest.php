@@ -13,6 +13,11 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
     protected $object;
 
     /**
+     * @var resource
+     */
+    protected $handle;
+
+    /**
      * Mock data
      */
     protected $mockProjectSlug = 'mockProjectSlug';
@@ -114,6 +119,48 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
         $this->object->notify($commit);
         $this->assertEquals(json_encode($data), $this->lastData);
         $this->assertEquals($this->widget, $this->lastUrl);
+    }
+
+    /**
+     * Test the actual HTTP POST by firing it at a local web server
+     */
+    public function testNotifyForReal()
+    {
+        $this->object->setPoster(null);
+        $this->object->setWidgetUrl("http://127.0.0.1:5555/mywidget");
+        $data = $this->getDataStub();
+        $commit = $this->getCommitMock();
+
+        $this->startServer();
+        $this->object->notify($commit);
+        $request = $this->getLastRequest();
+
+        $this->assertContains("POST /mywidget", $request);
+        $this->assertContains(json_encode($data), $request);
+    }
+
+    /**
+     * StartServer
+     *
+     */
+    protected function startServer()
+    {
+        if (!is_resource($this->handle)) { // should really check it's running properly
+            $this->handle = popen('node ' . __DIR__ . '/server.js 5555 | tee -a /tmp/sgn-server.log', 'r');
+            $serverRunning = fgets($this->handle);
+
+            if (strpos($serverRunning, 'Server running') !== 0) {
+                throw new \RunTimeException('Could not start mock server: ' . $serverRunning);
+            }
+        }
+    }
+
+    /**
+     * Get last request
+     */
+    protected function getLastRequest()
+    {
+        return stream_get_contents($this->handle);
     }
 
     /**
