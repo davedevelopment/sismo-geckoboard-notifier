@@ -6,6 +6,12 @@ use Sismo\Notifier;
 use Sismo\Commit;
 use Buzz\Browser;
 
+/**
+ * A geckoboard notifier for Sismo
+ *
+ * (c) Dave Marshall <dave.marshall@atstsolutions.co.uk>
+ *
+ */
 class GeckoboardNotifier extends Notifier
 {
     /**
@@ -16,7 +22,7 @@ class GeckoboardNotifier extends Notifier
     /**
      * @var string
      */
-    protected $widgetKey;
+    protected $widgetUrl;
 
     /**
      * @var String|Callable
@@ -95,46 +101,6 @@ class GeckoboardNotifier extends Notifier
         }
 
         $response = $this->send($this->widgetUrl, array('Content-type' => 'application/json'), json_encode($data));
-        return;
-    }
-
-    /**
-     * Send a request
-     *
-     * @param string $url
-     * @param array $headers
-     * @param string $data
-     *
-     * @return 
-     */
-    protected function send($url, array $headers = array(), $data)
-    {
-        if ($this->poster !== null) {
-            return call_user_func($this->poster, $url, $headers, $data);
-        }
-
-        /**
-         * See
-         * http://wezfurlong.org/blog/2006/nov/http-post-from-php-without-curl/
-         */
-        $params = array('http' => array(
-            'method'  => 'POST',
-            'content' => $data
-        ));
-        if (!empty($headers)) {
-            array_walk($headers, function(&$value, $key) {
-                $value = $key . ':' . $value;
-            });
-            $params['http']['header'] = implode("\n", $headers);
-        }
-
-        $ctx = stream_context_create($params);
-        $fp = @fopen($url, 'rb', false, $ctx);
-        if (!$fp) {
-            return;
-        }
-        $response = @stream_get_contents($fp);
-
         return;
     }
 
@@ -217,6 +183,46 @@ class GeckoboardNotifier extends Notifier
 
         $this->poster = $poster;
         return $this;
+    }
+
+    /**
+     * Send a request
+     *
+     * @param string $url
+     * @param array $headers
+     * @param string $data
+     *
+     * @return 
+     */
+    protected function send($url, array $headers = array(), $data)
+    {
+        if ($this->poster !== null) {
+            return call_user_func($this->poster, $url, $headers, $data);
+        }
+
+        /**
+         * See
+         * http://wezfurlong.org/blog/2006/nov/http-post-from-php-without-curl/
+         */
+        $params = array('http' => array(
+            'method'  => 'POST',
+            'content' => $data
+        ));
+        if (!empty($headers)) {
+            array_walk($headers, function(&$value, $key) {
+                $value = $key . ':' . $value;
+            });
+            $params['http']['header'] = implode("\n", $headers);
+        }
+
+        $ctx = stream_context_create($params);
+        $fp = @fopen($url, 'rb', false, $ctx);
+        if (!$fp) {
+            return;
+        }
+        $response = @stream_get_contents($fp);
+
+        return;
     }
 
     /**
