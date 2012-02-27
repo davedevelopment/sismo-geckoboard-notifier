@@ -44,6 +44,9 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
 
         $that = $this;
 
+        /**
+         * Give the notifier a stub closure to do the HTTP POST
+         */
         $this->mockPost = function($url, array $headers = array(), $data) use ($that) {
             $that->lastUrl = $url;
             $that->lastData = $data;
@@ -126,7 +129,11 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
      */
     public function testNotifyForReal()
     {
+        /**
+         * Get rid of the stub closure
+         */
         $this->object->setPoster(null);
+
         $this->object->setWidgetUrl("http://127.0.0.1:5555/mywidget");
         $data = $this->getDataStub();
         $commit = $this->getCommitMock();
@@ -150,7 +157,7 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
             $serverRunning = fgets($this->handle);
 
             if (strpos($serverRunning, 'Server running') !== 0) {
-                throw new \RunTimeException('Could not start mock server: ' . $serverRunning);
+                throw new \RunTimeException("Could not start server: $serverRunning. You need nodejs to run some tests.");
             }
         }
     }
