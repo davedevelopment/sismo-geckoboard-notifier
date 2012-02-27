@@ -28,8 +28,8 @@ Usage
 
 First up, you need a Geckoboard account, one with the Push API enabled (I had to
 ask, I assume at some point it will be the default). Add a custom text widget to
-your board, select Push as the method and give it an API key. The system should
-provide you a URL to use for the widget.
+your board, select Push as the method and take note of the provided widget URL.
+You can find your API key on the API tab of the Account page.
 
 In your Sismo config
 
