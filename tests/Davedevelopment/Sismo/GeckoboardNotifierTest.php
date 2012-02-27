@@ -49,7 +49,9 @@ class GeckoboardNotifierTest extends \PHPUnit_Framework_TestCase
         $this->widget = "http://dave.com";
         $this->object = new GeckoboardNotifier(
             $this->apiKey,
-            $this->widget
+            $this->widget,
+            "[%STATUS%]\n%message%\n%author%"
+
         );
 
         $that = $this;

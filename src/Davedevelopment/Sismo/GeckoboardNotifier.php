@@ -246,7 +246,12 @@ class GeckoboardNotifier extends Notifier
      */
     protected function getDefaultMessage(Commit $commit)
     {
-        return $this->format("[%STATUS%]\n%message%\n%author%", $commit);
+        $class = $commit->getStatus() == 'failed' ? 't-negative' : 't-positive';
+        $html = <<<EOS
+<p class="$class">{$commit->getDate()->format('Y-m-d H:i:s')} [%STATUS%]</p>
+<p style="font-size:80%">%message%<br>- %author%</p>
+EOS;
+        return $this->format($html, $commit);
     }
 
 }
