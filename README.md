@@ -20,7 +20,7 @@ configured.
 
 I've used a hacky way to send the HTTP POST in order to keep this dependency
 free, one class, one file, etc. As such, I've used a hacky way to test it fully,
-so you'll need [node.js](http://nodejs.org) installed to run on of the tests
+so you'll need [node.js](http://nodejs.org) installed to run one of the tests
 
 
 Usage
@@ -31,14 +31,25 @@ ask, I assume at some point it will be the default). Add a custom text widget to
 your board, select Push as the method and take note of the provided widget URL.
 You can find your API key on the API tab of the Account page.
 
+``` bash
+cd ~/.sismo
+wget https://raw.github.com/davedevelopment/sismo-geckoboard-notifier/master/src/Davedevelopment/Sismo/GeckoboardNotifier.php
+vim config.php
+
+```
+
 In your Sismo config
 
 ``` php
 <?php
+
+require_once __DIR__ . '/GeckoboardNotifier.php';
 $notifier = new Davedevelopment\Sismo\GeckoboardNotifier(
     "your_api_key", 
     "your_widget_url"
 ); 
+
+// ...
 
 $myProject->addNotifier($notifier);
 
